@@ -150,6 +150,19 @@ or AirDropped files reset their timestamps. Check the original file's metadata.
   client needs to do manually after handoff.
 - A build summary: what was built, what assumptions were made, and what I
   should personally verify before this goes live.
+- Local SEO baseline complete: location appears in title tag and meta
+  description, LocalBusiness schema is in the head, sitemap.xml and
+  robots.txt exist in the root, and footer copy references the service area.
+- Google Search Console is listed in the client handoff checklist. It
+  requires manual setup and cannot be skipped.
+- Every contact email address published anywhere on the site (header,
+  footer, CTA, schema markup) has been verified with a live DNS lookup
+  (`dig MX yourdomain.com`, `dig TXT yourdomain.com`) to actually have MX,
+  SPF, and DKIM records, not just a paid mailbox account. Send one real
+  test email to and from that address and confirm it arrives. A mailbox
+  provider reporting "activated" or a send API returning a message ID is
+  not proof of working DNS or actual delivery. Do this before the address
+  goes live on the site, and again before wiring any automation to it.
 
 ---
 

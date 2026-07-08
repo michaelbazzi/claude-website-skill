@@ -30,7 +30,14 @@ order and most of them never occur in the first place:
    default** (flip to public only if there's a specific reason). Confirm you
    are the only collaborator. Connect the hosting platform's continuous
    deployment (e.g. Netlify) to the repo before writing any code, so every
-   later push has a working deploy path already verified.
+   later push has a working deploy path already verified. **Also verify the
+   domain's email DNS at this same stage**: before any contact email
+   address gets published on the site or built into any automation, run a
+   live DNS lookup (`dig MX yourdomain.com`, `dig TXT yourdomain.com`) and
+   confirm MX, SPF, and (if using Google Workspace) DKIM records actually
+   resolve. Don't take "it's a paid Google Workspace account" as proof;
+   verify the DNS directly. See lesson 12 below for why this matters enough
+   to check this early.
 1. **Assets first.** Convert every photo to JPG and every video to MP4,
    verify orientation, file size, and quality on each one: before a single
    line of HTML references them. Never wire an unconverted or unverified
@@ -43,7 +50,7 @@ order and most of them never occur in the first place:
 4. **Interactions last.** Hover states, animations, micro-interactions.
    These are the easiest thing to get wrong in isolation (see lesson 7
    below), so they come after the static page is already right.
-5. **Responsive check before calling anything done.** Not a final glance —
+5. **Responsive check before calling anything done.** Not a final glance:
    actually check every breakpoint (see Definition of Done in the master
    prompt) before saying a build is finished.
 
@@ -119,13 +126,34 @@ framing for the real one once real content arrives.
 
 **10. Guessing on structure or ambiguity instead of asking.**
 Page architecture (single- vs. multi-page), any style choice not explicitly
-specified, and any instruction with more than one reasonable reading —
+specified, and any instruction with more than one reasonable reading:
 propose the interpretation and wait for confirmation, don't ship a guess.
 These are expensive to undo once built.
 
 **11. A rejected choice stays rejected.**
 If a style or approach is tried and then explicitly reverted, it's off the
 table for the rest of that project. Don't quietly re-suggest it later.
+
+**12. A domain's contact email being "set up" doesn't mean the DNS is
+actually configured. Verify with a live lookup, not the platform's own
+status badge.** A client's contact email (e.g. `hello@theirdomain.com`) can
+have a real, paid mailbox (Google Workspace, etc.) while the domain itself
+has zero MX, SPF, or DKIM records. This happens most often when a domain's
+nameservers get pointed at a new DNS host (Netlify, etc.) and the old mail
+records never get recreated, since DNS migrations don't carry old records
+over automatically. The failure mode is deceptive: outbound mail can still
+report "sent successfully" with a real message ID (the mailbox provider's
+own servers relay it regardless of the sending domain's DNS), while the
+email silently never arrives, and the admin dashboard can show a
+reassuring status like "Gmail activated" that only reflects the mailbox
+service being licensed, not the DNS actually being live. Don't trust any
+of that. The only real proof is: run `dig MX yourdomain.com` and
+`dig TXT yourdomain.com` yourself, and send an actual test email round
+trip (to and from the address) before treating any contact email as
+functional, whether that's the first time it's published on a site, or
+before building any automation (auto-responders, notifications) on top of
+it. This should be checked at initial launch, not discovered later while
+debugging an unrelated-seeming automation bug.
 
 ### Process patterns that work every time
 
@@ -148,6 +176,17 @@ table for the rest of that project. Don't quietly re-suggest it later.
   generic "Why Choose Us" section, no glassmorphism, a real display+body
   font pairing (not default system font), and verified responsive behavior
   at minimum 375px / 768px / 1024px / 1440px widths.
+- Every client site built for a local service business needs these six SEO
+  items before launch: location in title tag, location in meta description,
+  LocalBusiness schema in the head, location in footer copy, sitemap.xml,
+  and robots.txt. Never launch a local business site without these. They
+  take 20 minutes and are the difference between invisible and findable on
+  local search.
+- Never include a physical street address in schema or copy for a mobile
+  service business. Use city and state for addressLocality and
+  addressRegion and set areaServed to the service region.
+- Google Search Console must be set up the day the site goes live. It
+  cannot be automated. Flag it in every client handoff checklist.
 
 ---
 
@@ -229,8 +268,8 @@ repeatedly.
 real bug.** Check the DOM, computed styles, and accessibility tree directly
 (via a JS eval, not a screenshot) before concluding the page itself is
 broken. If the viewport looks unexpectedly narrow/mobile-shaped in a
-screenshot, explicitly resize to a real desktop width before judging layout
-— don't assume the reported viewport is accurate.
+screenshot, explicitly resize to a real desktop width before judging layout,
+and don't assume the reported viewport is accurate.
 
 **`requestAnimationFrame`-driven effects don't reliably tick in an automated
 eval context.** If you dispatch a synthetic event and then immediately read
@@ -271,8 +310,8 @@ declaration.
 **`mix-blend-mode` on an overlay affects everything visually beneath it,
 including thin decorative line art.** A blend-mode trick used to make a
 custom cursor auto-contrast against both light and dark backgrounds will
-also visibly distort any hairline SVG stroke or fine graphic it passes over
-— which can look like the graphic itself is broken. Fix by giving the
+also visibly distort any hairline SVG stroke or fine graphic it passes over,
+which can look like the graphic itself is broken. Fix by giving the
 decorative element `isolation: isolate`, which creates its own stacking
 context so external blend modes can't reach into it.
 
@@ -303,8 +342,8 @@ Don't trust a single mental pass over a long file.
 
 **When enforcing a brand voice doc or banned-word list, verify
 programmatically, not by eye.** Grep the finished content for each banned
-term and for banned punctuation (e.g. em dashes) and report a zero count —
-don't just assert compliance.
+term and for banned punctuation (e.g. em dashes) and report a zero count.
+Don't just assert compliance.
 
 ### Git & repo hygiene
 
@@ -328,7 +367,7 @@ don't just assert compliance.
 
 ### Common post-launch add-on requests (reference, not a checklist)
 
-- **"Can we auto-text/auto-email clients when a form is submitted?"** —
+- **"Can we auto-text/auto-email clients when a form is submitted?"**
   Make.com (or Zapier) plus the form tool's native webhook/watch-submission
   trigger is the standard pattern. For SMS specifically: there is no real
   free tier for outbound business SMS anywhere (carriers charge termination
@@ -340,3 +379,21 @@ don't just assert compliance.
   by carriers. Google Voice has no send API and cannot be wired into an
   automation platform: steer clients toward it only for personal/manual
   use, never as the automation endpoint.
+- **Before building any email auto-responder against a client's contact
+  address, verify that address's domain DNS first** (see lesson 12 in Part
+  1). A JotForm/webhook/Gmail automation can look completely broken
+  (webhook fires, Gmail module reports success, email never arrives) when
+  the real cause is missing MX/SPF/DKIM on the sending domain, not
+  anything wrong with the automation itself. Rule this out with a live
+  `dig` lookup before debugging the scenario logic.
+- **A Gmail "Send an Email" module reporting success (a real Message ID)
+  does not mean the email was delivered**, only that the mailbox's own
+  servers accepted it for relay. Confirm actual delivery by checking the
+  recipient inbox directly (and Spam), not by trusting the automation
+  platform's execution log.
+- **JotForm's webhook payload nests all real answers inside a single
+  `rawRequest` string** (JSON-encoded, keyed by internal question IDs like
+  `q4_name`, `q9_email`, not the visible field labels), not as clean
+  top-level fields. Add a JSON → Parse JSON step right after the webhook
+  trigger, with its schema generated from one real captured submission, to
+  get individually mappable fields.
