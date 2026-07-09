@@ -397,3 +397,41 @@ Don't just assert compliance.
   top-level fields. Add a JSON → Parse JSON step right after the webhook
   trigger, with its schema generated from one real captured submission, to
   get individually mappable fields.
+- **A successful manual test does not mean the automation is live.**
+  Make.com scenarios have a separate on/off toggle ("Immediately as data
+  arrives") from the "Run once" manual test button. Confirming a test
+  submission works and then walking away without switching that toggle on
+  is a real, easy-to-make mistake: everything looks done, but the
+  automation silently never fires on real submissions. Always verify the
+  toggle is on as the explicit last step, not an assumed side effect of
+  testing successfully.
+- **If a scenario shows zero execution activity for a real trigger event
+  (not even a failed run), the problem is upstream of the automation
+  logic**, most likely the source platform's own webhook/integration
+  connection having gone inactive or incomplete on its end (e.g. JotForm's
+  Settings → Integrations → Webhooks silently reverting to "incomplete" and
+  needing "Complete Integration" clicked again). Check the trigger side
+  first, and use the automation platform's execution **History** view (not
+  just the visual canvas) to distinguish a real automatic run from a
+  manual test run before debugging downstream modules.
+- **When rebuilding deleted automation modules, action names that sound
+  similar are not interchangeable.** A Gmail "Reply to an Email" action and
+  "Send an Email" action are separate items in the same app's action list;
+  picking the wrong one produces a module asking for a required field that
+  makes no sense for the task (e.g. a "Thread ID" for what should be a
+  fresh outbound email), which is the tell that the wrong action was
+  selected, not a configuration bug.
+- **When verifying an outbound automated email, check the recipient's
+  inbox, not the sending account's own inbox.** The sending account's own
+  Inbox/Sent being empty of anything recent is not evidence of failure by
+  itself, especially after testing where old sends may have been manually
+  cleaned out of Sent.
+- **A save in an automation platform's module editor can appear to succeed
+  in the UI without actually persisting.** A large paste immediately
+  followed by clicking Save can lose the update if the app's internal
+  state hasn't caught up yet (seen in Make.com's field editors). After
+  editing any critical field, close the module and reopen it to visually
+  confirm the edit actually stuck before running a test against it. If a
+  fix seems to not have taken effect, check what was *actually used* for
+  that specific run in the platform's execution history/logs, not just
+  what the editor currently displays; the two can disagree.
