@@ -435,3 +435,27 @@ Don't just assert compliance.
   fix seems to not have taken effect, check what was *actually used* for
   that specific run in the platform's execution history/logs, not just
   what the editor currently displays; the two can disagree.
+- **Bootstrapping a new webhook/parser pair with a temporary placeholder
+  value can cause real sends of fake data if done after a downstream
+  action module already exists.** A parser module's input field is often
+  required and can't be empty, but a brand new webhook has no captured
+  sample yet for its variable picker to offer, so a hardcoded placeholder
+  has to be pasted in temporarily just to pass validation and let "Run
+  once" capture a real bundle. If an email/notification action module is
+  already wired up downstream at that point, "Run once" doesn't just
+  capture a sample, it executes the entire live chain, genuinely sending
+  a real message built from the fake placeholder data. Do the entire
+  bootstrap capture *before* connecting any downstream action module, or
+  temporarily disconnect it during bootstrapping. If a bug produces the
+  exact same wrong output on every single run regardless of what's
+  actually submitted, suspect a hardcoded placeholder still sitting in an
+  early module before suspecting a queue, cache, or platform bug. Check
+  the earliest module's actual input first, not the mapping of the module
+  that's misbehaving.
+- **When replacing placeholder text with a live variable chip in a rich
+  content field, delete the entire field and paste the correct content
+  fresh rather than surgically editing around the placeholder in place.**
+  Double-click-select-and-delete next to an already-inserted chip can
+  leave stray characters glued directly onto it (producing garbled but
+  functioning output like "HiMICHAEL" instead of "Hi Michael,"), which is
+  easy to miss visually since the variable itself is resolving correctly.
