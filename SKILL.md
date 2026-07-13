@@ -33,9 +33,13 @@ order and most of them never occur in the first place:
    later push has a working deploy path already verified. **Also verify the
    domain's email DNS at this same stage**: before any contact email
    address gets published on the site or built into any automation, run a
-   live DNS lookup (`dig MX yourdomain.com`, `dig TXT yourdomain.com`) and
-   confirm MX, SPF, and (if using Google Workspace) DKIM records actually
-   resolve. Don't take "it's a paid Google Workspace account" as proof;
+   live DNS lookup (`dig MX yourdomain.com`, `dig TXT yourdomain.com`,
+   `dig TXT _dmarc.yourdomain.com`) and confirm MX, SPF, DKIM (if using
+   Google Workspace or similar), and DMARC records all actually resolve.
+   DMARC is part of the standard checklist, not an optional extra to add
+   later if delivery problems show up (start it in monitoring mode,
+   `p=none`, so it never blocks mail before there's any history). Don't
+   take "it's a paid Google Workspace account" as proof;
    verify the DNS directly. See lesson 12 below for why this matters enough
    to check this early.
 1. **Assets first.** Convert every photo to JPG and every video to MP4,
@@ -138,7 +142,7 @@ table for the rest of that project. Don't quietly re-suggest it later.
 actually configured. Verify with a live lookup, not the platform's own
 status badge.** A client's contact email (e.g. `hello@theirdomain.com`) can
 have a real, paid mailbox (Google Workspace, etc.) while the domain itself
-has zero MX, SPF, or DKIM records. This happens most often when a domain's
+has zero MX, SPF, DKIM, or DMARC records. This happens most often when a domain's
 nameservers get pointed at a new DNS host (Netlify, etc.) and the old mail
 records never get recreated, since DNS migrations don't carry old records
 over automatically. The failure mode is deceptive: outbound mail can still
@@ -147,13 +151,28 @@ own servers relay it regardless of the sending domain's DNS), while the
 email silently never arrives, and the admin dashboard can show a
 reassuring status like "Gmail activated" that only reflects the mailbox
 service being licensed, not the DNS actually being live. Don't trust any
-of that. The only real proof is: run `dig MX yourdomain.com` and
-`dig TXT yourdomain.com` yourself, and send an actual test email round
-trip (to and from the address) before treating any contact email as
-functional, whether that's the first time it's published on a site, or
-before building any automation (auto-responders, notifications) on top of
-it. This should be checked at initial launch, not discovered later while
-debugging an unrelated-seeming automation bug.
+of that. The only real proof is: run `dig MX yourdomain.com`,
+`dig TXT yourdomain.com`, and `dig TXT _dmarc.yourdomain.com` yourself, and
+send an actual test email round trip (to and from the address) before
+treating any contact email as functional, whether that's the first time
+it's published on a site, or before building any automation
+(auto-responders, notifications) on top of it. This should be checked at
+initial launch, not discovered later while debugging an unrelated-seeming
+automation bug.
+
+**13. A Gmail account's "Send mail as" display name only applies to mail
+composed through Gmail's own interface, not to API-driven automated
+sends.** If a client wants outgoing automated email (via Make.com, Zapier,
+or similar) to show a business name instead of a personal name, changing
+the account's "Send mail as" name (Gmail Settings → Accounts and Import)
+will not affect it; a real client-facing email from the automation can
+still show the personal account holder's name even after that setting is
+changed and verified working for manually-composed mail. The sender name
+for an automated send has to be set explicitly inside the automation
+platform's own send module, typically under an "Advanced settings" toggle
+with a "From Name" or "Sender Name" field. Set this at initial module
+setup, alongside To/Subject/Body, not as a fix discovered after a client
+notices the wrong name on a live email.
 
 ### Process patterns that work every time
 
@@ -383,7 +402,7 @@ Don't just assert compliance.
   address, verify that address's domain DNS first** (see lesson 12 in Part
   1). A JotForm/webhook/Gmail automation can look completely broken
   (webhook fires, Gmail module reports success, email never arrives) when
-  the real cause is missing MX/SPF/DKIM on the sending domain, not
+  the real cause is missing MX/SPF/DKIM/DMARC on the sending domain, not
   anything wrong with the automation itself. Rule this out with a live
   `dig` lookup before debugging the scenario logic.
 - **A Gmail "Send an Email" module reporting success (a real Message ID)

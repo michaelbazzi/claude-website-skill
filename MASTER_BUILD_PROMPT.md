@@ -157,12 +157,20 @@ or AirDropped files reset their timestamps. Check the original file's metadata.
   requires manual setup and cannot be skipped.
 - Every contact email address published anywhere on the site (header,
   footer, CTA, schema markup) has been verified with a live DNS lookup
-  (`dig MX yourdomain.com`, `dig TXT yourdomain.com`) to actually have MX,
-  SPF, and DKIM records, not just a paid mailbox account. Send one real
-  test email to and from that address and confirm it arrives. A mailbox
-  provider reporting "activated" or a send API returning a message ID is
-  not proof of working DNS or actual delivery. Do this before the address
-  goes live on the site, and again before wiring any automation to it.
+  (`dig MX yourdomain.com`, `dig TXT yourdomain.com`,
+  `dig TXT _dmarc.yourdomain.com`) to actually have MX, SPF, DKIM, and
+  DMARC records, not just a paid mailbox account. DMARC starts in
+  monitoring mode (`p=none`). Send one real test email to and from that
+  address and confirm it arrives. A mailbox provider reporting "activated"
+  or a send API returning a message ID is not proof of working DNS or
+  actual delivery. Do this before the address goes live on the site, and
+  again before wiring any automation to it.
+- If a client wants automated outgoing email (via Make.com, Zapier, etc.)
+  to show a business name instead of a personal name, set that sender
+  name explicitly inside the automation platform's own send module
+  (usually under "Advanced settings" → "From Name"). The email account's
+  own "Send mail as" display name setting only affects manually-composed
+  mail and does not carry over to API-driven sends.
 
 ---
 
