@@ -174,6 +174,26 @@ with a "From Name" or "Sender Name" field. Set this at initial module
 setup, alongside To/Subject/Body, not as a fix discovered after a client
 notices the wrong name on a live email.
 
+**14. A domain's registrar panel can display the correct nameservers while
+the domain is actually resolving somewhere else entirely.** ICANN requires
+registrars to verify the registrant contact email within a set window after
+registration or any contact-info change. If that verification email never
+gets clicked, the registrar (Namecheap, at least) silently overrides the
+domain's live nameservers to a parked "verify your contact info" page,
+even though the panel still shows "Custom DNS" pointed at the real host
+(Netlify, etc.) and the domain status reads "Active." The site and any mail
+routing through that domain simply stop resolving, with no error surfaced
+anywhere in the hosting platform. Don't trust the registrar's displayed
+nameserver settings as proof of what's live: confirm with a real lookup
+(`dig NS yourdomain.com` and `dig A yourdomain.com`, both against a public
+resolver like `@8.8.8.8`) if a client reports the site being down and the
+host-side (Netlify, etc.) config looks untouched. The fix is at the
+registrar, not the host: find the registrant contact email (registrar's
+domain contacts/WHOIS page), check that inbox (including spam) for the
+ICANN/registrar verification email, and click it. This is worth checking
+proactively right after initial domain registration or any registrant
+contact change, not only after a client reports an outage.
+
 ### Process patterns that work every time
 
 - Pull color, type, and brand specifics from whatever source-of-truth the

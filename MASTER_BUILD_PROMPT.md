@@ -171,6 +171,15 @@ or AirDropped files reset their timestamps. Check the original file's metadata.
   (usually under "Advanced settings" → "From Name"). The email account's
   own "Send mail as" display name setting only affects manually-composed
   mail and does not carry over to API-driven sends.
+- Confirm the domain's registrant contact email has been verified with the
+  registrar (check for an ICANN/registrar verification email in that
+  inbox, including spam) right after initial registration or any
+  registrant contact change. An unverified registrant email can cause the
+  registrar to silently override the domain's nameservers to a parked
+  page, taking the site down, even while the registrar's own panel still
+  displays the correct "Custom DNS" settings. Don't trust the panel:
+  confirm with `dig NS yourdomain.com` and `dig A yourdomain.com` against
+  a public resolver if this is ever in question.
 
 ---
 
