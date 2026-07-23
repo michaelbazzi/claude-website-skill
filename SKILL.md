@@ -498,3 +498,18 @@ Don't just assert compliance.
   leave stray characters glued directly onto it (producing garbled but
   functioning output like "HiMICHAEL" instead of "Hi Michael,"), which is
   easy to miss visually since the variable itself is resolving correctly.
+- **"I want to try Claude Design for a client, do I have a design system?"**
+  Almost always the client has the functional equivalent of one even
+  without a Figma file: the live `style.css` custom properties (colors,
+  font stack, spacing scale), the `images/brand-kit/` assets, and the
+  brand voice doc. Rather than uploading raw files and hoping Design infers
+  the right patterns, write a single formal design-system markdown file
+  first, pulling exact values from `style.css` (never invented or
+  approximated) and summarizing the voice rules: palette with hex + role,
+  type scale with the real `clamp()` values, spacing/motion tokens,
+  component patterns (button states, card/grid treatment, section
+  background rhythm), and an explicit "what not to introduce" list mirrored
+  from the standard vibe-code check. See
+  `examples/TheLuxeMoment_DesignSystem.md` in this repo for the reference
+  shape. This gives Design (or any design tool) a grounded starting point
+  instead of it guessing at colors or tone from scratch.
