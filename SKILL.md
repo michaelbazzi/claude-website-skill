@@ -510,6 +510,6 @@ Don't just assert compliance.
   component patterns (button states, card/grid treatment, section
   background rhythm), and an explicit "what not to introduce" list mirrored
   from the standard vibe-code check. See
-  `examples/TheLuxeMoment_DesignSystem.md` in this repo for the reference
+  `examples/ExampleClient_DesignSystem.md` in this repo for the reference
   shape. This gives Design (or any design tool) a grounded starting point
   instead of it guessing at colors or tone from scratch.

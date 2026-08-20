@@ -1,12 +1,12 @@
-# The Luxe Moment — Design System
+# Wren & Rose — Design System
 **For use in Claude Design and any future design tooling**
-**Source of truth: pulled directly from the live `style.css`, `index.html`, and `TheLuxeMoment_BrandVoice.md` — not invented or approximated.**
+**Source of truth: pulled directly from the live `style.css`, `index.html`, and `ExampleClient_BrandVoice.md` — not invented or approximated.**
 
 ---
 
 ## Brand Summary
 
-The Luxe Moment is a luxury **event styling company** (not a balloon company, not a party supply business) serving the Lehigh Valley, Pennsylvania. Founded by Jillissa Matthews. Full-service: design, sourcing, building, delivery, setup, breakdown, cleanup. The client shows up; Jillissa handles everything else.
+Wren & Rose is a luxury **event styling company** (not a balloon company, not a party supply business) serving a mid-Atlantic metro region. Founded by Sarah Callahan. Full-service: design, sourcing, building, delivery, setup, breakdown, cleanup. The client shows up; Sarah handles everything else.
 
 Visual personality: quiet luxury. Warm neutrals, not stark black/white. Flat surfaces, no gradients, no glassmorphism, no drop shadows. Sharp/minimal corners (near-zero border-radius). Editorial serif display type paired with a clean sans body. Generous whitespace. Motion is restrained — a single eased transition, never competing effects.
 
@@ -91,7 +91,7 @@ Every major section and hero uses a small uppercase "eyebrow" label above its he
 
 ## Voice (for any AI-generated copy in Design)
 
-Full detail lives in `TheLuxeMoment_BrandVoice.md` — summarized here for design-tool context:
+Full detail lives in `ExampleClient_BrandVoice.md` — summarized here for design-tool context:
 
 - **Warm, confident, personal, direct, specific.** No corporate language, no filler.
 - **Never use em dashes.** Full stop, no exceptions.
